@@ -1,0 +1,111 @@
+﻿@model EmployeeCreateViewModel;
+@{
+    ViewBag.Title = "Create Employee";
+}
+
+
+
+
+
+    <form enctype="multipart/form-data" asp-controller="Home" asp-action="Create" method="post" class="mt-2">
+
+        <div class="col-md-12 m-auto">
+            <div class="card row">
+
+                <div class="card-header bg-info text-white"><h5>Create Employee </h5></div>
+                <div class="card-body">
+
+
+
+
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Name"></label>
+                                <input asp-for="Name" class="form-control" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="Email" class="col-form-label"></label>
+
+                                <input asp-for="Email" class="form-control" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="Department"></label>
+                                <select asp-for="Department" class="form-control" asp-items="Html.GetEnumSelectList<Dept>()">
+                                    <option value="">Select Designation</option>
+                                </select>
+
+                                <span asp-validation-for="Department" class="text-danger"></span>
+                            </div>
+
+                        </div>  @*End of Col-md-6*@
+
+
+                        <div class="col-md-6">
+
+                            <div class="form-group">
+                                <label asp-for="Photo" class="col-form-label"></label>
+                                <div class="custom-file">
+                                    @*                        <input multiple asp-for="Photo" class="form-control custom-file-input" />*@
+                                    <input asp-for="Photo" class="form-control custom-file-input" />
+                                    <label class="custom-file-label">Chose File....</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary btn-sm col-sm-4">Create</button>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                    </div>
+
+
+
+
+
+            </div>
+
+
+
+        </div>
+    </form>
+
+@section Scripts
+    {
+    <script>
+        $(document).ready(function () {
+            $(".custom-file-input").on("change", function () {
+                //var filename = $(this).val().split("\\").pop();
+                //$(this).next(".custom-file-label").html(filename);
+                var files = $(this)[0].files;
+                var filename = "";
+                if (files.length == 1) {
+                    // $(files).each(function (index,item) {
+                    //     if (filename == "")
+                    //     {
+                    //         filename = item.name
+                    //     }
+                    //else {
+                    //         filename = filename + "'; " + item.name
+
+                    //    }
+                    // })
+                    filename = files[0].name
+                }
+                else {
+                    filename = files.length + " Files Selected"
+                }
+                $(this).next(".custom-file-label").html(filename)
+            })
+        })
+    </script>
+
+}

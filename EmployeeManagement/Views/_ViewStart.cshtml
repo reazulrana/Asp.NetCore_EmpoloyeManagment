@@ -1,0 +1,25 @@
+﻿
+@*//this code is for check is user logedin or not*@
+@*@inject SignInManager<IdentityUser> signInManager
+
+@{
+    if (signInManager.IsSignedIn(User))
+    {
+        Layout = "_Admin";
+
+    }
+    else
+    {
+        Layout = "_Layout";
+
+    }
+}*@
+
+
+
+@{
+ 
+        Layout = "_Layout";
+
+ 
+}

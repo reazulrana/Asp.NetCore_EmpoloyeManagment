@@ -1,0 +1,17 @@
+﻿@{ 
+    ViewBag.Title = "Not Found";
+}
+
+
+<div class="card bg-danger">
+    <div class="card-header">
+        <h1 class="text-white">@ViewBag.ErrorMessage[0]</h1>
+    </div>
+    <div class="card-body">
+        <h2 class="text-white mb-3">@ViewBag.ErrorMessage[1]</h2>
+
+        <a asp-controller="Home" class="text-white" asp-action="Index">
+            Click Her To See All List of Employee
+        </a>
+    </div>
+</div>
