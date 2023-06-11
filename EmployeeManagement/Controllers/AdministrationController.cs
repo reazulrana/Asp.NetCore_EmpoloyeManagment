@@ -1,4 +1,5 @@
 ﻿using EmployeeManagement.Models;
+using EmployeeManagement.Utility;
 using EmployeeManagement.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -105,17 +106,15 @@ namespace EmployeeManagement.Controllers
 
 
 
-        [HttpGet]
+        [HttpPost]
         public async Task<IActionResult> EditRole(EditRoleViewModel model)
         {
 
             var role = await roleManager.FindByIdAsync(model.Id);
             if (role == null)
             {
-                List<string> errors = new List<string>();
-                errors.Add("Not Found Error Message");
-                errors.Add($"The Role With This Id {model.Id} Not Found");
-                ViewBag.ErrorMessage = errors;
+            
+                ViewBag.ErrorMessage = GlobalFunction.IdNotFound(model.Id);
                 return View("NotFound");
             }
 
@@ -161,6 +160,99 @@ namespace EmployeeManagement.Controllers
             }
 
         }
+
+        [HttpGet]
+        public async Task<IActionResult> EditUserInRole(string roleId)
+        {
+
+            ViewBag.roleId = roleId;
+
+            var role = await roleManager.FindByIdAsync(roleId);
+
+            if(role==null)
+            {
+                ViewBag.ErrorMessage = GlobalFunction.IdNotFound(roleId);
+                return View("NotFound");
+            }
+
+            var model = new List<UserRoleViewModel>();
+                
+
+            foreach(var user in userManager.Users)
+            {
+
+                var userRoleViewModel = new UserRoleViewModel
+                {
+                    UserId = user.Id,
+                    UserName = user.UserName
+                };
+
+                if(await userManager.IsInRoleAsync(user,role.Name))
+                {
+                    userRoleViewModel.IsSelected = true;
+                }
+                else
+                {
+                    userRoleViewModel.IsSelected = false;
+                }
+
+                model.Add(userRoleViewModel);
+            }
+
+            return View(model);
+
+
+        }
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> EditUserInRole(List<UserRoleViewModel>model, string roleId)
+        {
+
+            var role = await roleManager.FindByIdAsync(roleId);
+
+            if(role==null)
+            {
+                ViewBag.ErrorMessage = GlobalFunction.IdNotFound(roleId);
+                return View("NotFound");
+            }
+
+
+            for(int i=0; i<model.Count; i++)
+            {
+                var user = await userManager.FindByIdAsync(model[i].UserId);
+
+                IdentityResult result = null;
+                if (model[i].IsSelected && !(await userManager.IsInRoleAsync(user, role.Name)))
+                {
+                    result = await userManager.AddToRoleAsync(user, role.Name);
+                }
+                else if (!model[i].IsSelected && (await userManager.IsInRoleAsync(user, role.Name)))
+                {
+                    result = await userManager.RemoveFromRoleAsync(user, role.Name);
+                }
+                else
+                {
+                    continue;
+                }
+
+                if(result.Succeeded)
+                {
+                    if (i < (model.Count - 1))
+                    
+                        continue;
+                    else
+                        return RedirectToAction("EditRole", new { id = roleId });
+                
+                }
+            }
+
+            return RedirectToAction("EditRole",new {id=roleId });
+
+
+        }
+
 
     }
 }
