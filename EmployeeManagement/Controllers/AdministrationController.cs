@@ -11,6 +11,9 @@ using System.Threading.Tasks;
 
 namespace EmployeeManagement.Controllers
 {
+
+    [Authorize(Roles = "Admin,Manager")]
+    
     public class AdministrationController : Controller
     {
         private readonly RoleManager<IdentityRole> roleManager;
@@ -59,7 +62,8 @@ namespace EmployeeManagement.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous] //Access Permission is for All User
+        //[AllowAnonymous] //Access Permission is for All User
+        [Authorize(Roles ="Admin")]
         public IActionResult ListRoles()
         {
             var Roles = roleManager.Roles;
@@ -70,7 +74,6 @@ namespace EmployeeManagement.Controllers
 
 
         [HttpGet]
-        
         public async Task<IActionResult> EditRole(string id)
         {
 
@@ -107,6 +110,7 @@ namespace EmployeeManagement.Controllers
 
 
         [HttpPost]
+
         public async Task<IActionResult> EditRole(EditRoleViewModel model)
         {
 
@@ -207,6 +211,7 @@ namespace EmployeeManagement.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> EditUserInRole(List<UserRoleViewModel>model, string roleId)
         {
 
