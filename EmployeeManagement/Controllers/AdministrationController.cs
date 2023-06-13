@@ -24,7 +24,168 @@ namespace EmployeeManagement.Controllers
             this.roleManager = roleManager;
             this.userManager = userManager;
         }
-    
+
+
+
+
+        [HttpGet]
+        [Authorize(Roles ="Admin")]
+        public IActionResult ListUsers()
+        {
+            var users = userManager.Users;
+
+            return View(users);
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> EditUser(string Id)
+        {
+
+            var user = await userManager.FindByIdAsync(Id);
+            if(user==null)
+            {
+                ViewBag.ErrorMessage = GlobalFunction.IdNotFound(Id);
+                return View("NotFound");
+
+            }
+
+            var claims = await userManager.GetClaimsAsync(user);
+            var roles = await userManager.GetRolesAsync(user);
+
+
+
+            var model = new EditUserViewModel()
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                Email = user.Email,
+                City = user.City,
+                Claims = claims.Select(x => x.Value).ToList(),
+                Roles = roles.ToList()
+
+
+            };
+
+
+
+
+            return View(model);
+        }
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> EditUser(EditUserViewModel model)
+        {
+
+            var user = await userManager.FindByIdAsync(model.Id);
+            if (user == null)
+            {
+                ViewBag.ErrorMessage = GlobalFunction.IdNotFound(model.Id);
+                return View("NotFound");
+
+            }
+
+            else
+            {
+                user.UserName = model.UserName;
+                user.Email = model.Email;
+                user.City = model.City;
+                var result = await userManager.UpdateAsync(user);
+
+                if(result.Succeeded)
+                {
+                    return RedirectToAction("ListUsers");
+                }
+
+                foreach(var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+
+                return View(model);
+
+            }
+        }
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteUser(string Id)
+        {
+            var user = await userManager.FindByIdAsync(Id);
+
+
+            if(user==null)
+            {
+                ViewBag.ErrorMessage = GlobalFunction.IdNotFound(Id);
+                return View("NotFound");
+
+            }
+            else
+            {
+                var result = await userManager.DeleteAsync(user);
+
+                if(result.Succeeded)
+                {
+                    return RedirectToAction("ListUsers");
+                }
+
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+
+            }
+
+
+            return View("ListUsers");
+
+
+        }
+
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteRole(string Id)
+        {
+            var role = await roleManager.FindByIdAsync(Id);
+
+
+            if (role == null)
+            {
+                ViewBag.ErrorMessage = GlobalFunction.IdNotFound(Id);
+                return View("NotFound");
+
+            }
+            else
+            {
+                var result = await roleManager.DeleteAsync(role);
+
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("ListRoles");
+                }
+
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+
+            }
+
+
+            return View("ListRoles");
+
+
+        }
+
+
+
 
         [HttpGet]
         public IActionResult CreateRole()

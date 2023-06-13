@@ -1,0 +1,121 @@
+﻿@model EditUserViewModel
+
+@{ 
+    ViewBag.Title = "Edit User";
+}
+
+
+<form method="post">
+
+    <div class="card">
+        <div class="card-header">Edit User</div>
+        <div class="card-body">
+
+            <div class="form-group">
+                <div asp-validation-summary="All" class="text-danger"></div>
+            </div>
+
+            <div class="form-group row">
+                <label asp-for="@Model.Id" class="col-md-2 col-form-label"></label>
+                <div class="col-md-10">
+                    <input disabled class="form-control" asp-for="@Model.Id" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <label asp-for="@Model.UserName" class="col-md-2 col-form-label"></label>
+                <div class="col-md-10">
+                    <input class="form-control" asp-for="@Model.UserName" />
+                    <span asp-validation-for="@Model.UserName" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label asp-for="@Model.Email" class="col-md-2 col-form-label"></label>
+                <div class="col-md-10">
+                    <input class="form-control" asp-for="@Model.Email" />
+                    <span asp-validation-for="@Model.Email" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label asp-for="@Model.City" class="col-md-2 col-form-label"></label>
+                <div class="col-md-10">
+                    <input class="form-control" asp-for="@Model.City" />
+                </div>
+            </div>
+
+        </div>
+        <div class="card-footer">
+            <div class="form-group">
+                <button class="btn btn-success" type="submit">Update</button>
+                <a asp-controller="Administration" asp-action="ListUsers" class="btn btn-primary">Cancel</a>
+
+            </div>
+        </div>
+    </div>
+
+
+
+
+    @*Role Part*@
+
+
+
+    <div class="card mt-3">
+        <div class="card-header">User Roles</div>
+        <div class="card-body">
+
+            @if (Model.Roles.Any())
+            {
+                foreach (var role in Model.Roles)
+                {
+                    <h5 class="card-title">@role</h5>
+                }
+            }
+            else
+            {
+                <h5 class="card-title">None At The Moment</h5>
+            }
+
+        </div>
+        <div class="card-footer">
+            <div class="form-group">
+                <a href="#" class="btn btn-primary">Manage Roles</a>
+
+            </div>
+        </div>
+    </div>
+
+
+
+
+    @*Claim Part*@
+
+
+
+    <div class="card mt-3">
+        <div class="card-header">User Claims</div>
+        <div class="card-body">
+
+            @if (Model.Roles.Any())
+            {
+                foreach (var claim in Model.Claims)
+                {
+                    <h5 class="card-title">@claim</h5>
+                }
+            }
+            else
+            {
+                <h5 class="card-title">None At The Moment</h5>
+            }
+
+        </div>
+        <div class="card-footer">
+            <div class="form-group">
+                <a href="#" class="btn btn-primary">Manage Claims</a>
+
+            </div>
+        </div>
+    </div>
+
+</form>
